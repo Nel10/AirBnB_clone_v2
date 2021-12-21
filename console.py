@@ -134,7 +134,7 @@ class HBNBCommand(cmd.Cmd):
                 kwarg[find.split("=")[0]] = search
 
         new_instance = HBNBCommand.classes[arg_s[0]]()
-        new_instance.__dict__.update(kwarg)
+        new_instance.__dict__.update(**kwarg)
         storage.save()
         print(new_instance.id)
 
