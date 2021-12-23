@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from os import getenv
-from models.amenity import Amenity
+
 from models.review import Review
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, Table
@@ -9,12 +9,9 @@ from sqlalchemy.orm import relationship
 import models
 
 place_amenity = Table('place_amenity', Base.metadata, Column('place_id',
-                                                             String(60),
-                                                             ForeignKey
-                                                             ('places.id'),
-                                                             nullable=False),
+                      String(60), ForeignKey('places.id'), nullable=False),
                       Column('amenity_id', String(60),
-                             ForeignKey('amenities.id'), nullable=False))
+                      ForeignKey('amenities.id'), nullable=False))
 
 
 if getenv("HBNB_TYPE_STORAGE") == "db":
@@ -35,7 +32,7 @@ if getenv("HBNB_TYPE_STORAGE") == "db":
         amenities = relationship("Amenity", secondary=place_amenity,
                                  viewonly=False)
 else:
-    class User(BaseModel):
+    class Place(BaseModel):
         """Defined class to work with FileStorage"""
         city_id = ""
         user_id = ""
@@ -56,6 +53,7 @@ else:
     @property
     def amenities(self):
         '''Function getter to amenities'''
+        from models.amenity import Amenity
         self.amenity_ids = models.storage.all(Amenity)
         return self.amenity_ids
 
