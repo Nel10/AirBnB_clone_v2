@@ -17,7 +17,7 @@ place_amenity = Table('place_amenity', Base.metadata, Column('place_id',
 if getenv("HBNB_TYPE_STORAGE") == "db":
     class Place(BaseModel, Base):
         """ A place to stay """
-        _tablename_ = "places"
+        __tablename__ = "places"
         city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
         user_id = Column(String(60),  ForeignKey('users.id'), nullable=False)
         name = Column(String(128), nullable=False)
@@ -60,5 +60,5 @@ else:
     @amenities.setter
     def amenities(self, id):
         '''Function setter to amenities'''
-        if id._class.name_ == "Amenity":
+        if id.__class__.__name__ == "Amenity":
             self.amenity_ids.append(id)
