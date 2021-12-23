@@ -33,10 +33,11 @@ class HBNBCommand(cmd.Cmd):
     def preloop(self):
         """Prints if isatty is false"""
         if not sys.__stdin__.isatty():
-            print('(hbnb)')
+            print('(hbnb) ', end='')
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
+
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -121,10 +122,7 @@ class HBNBCommand(cmd.Cmd):
             if not args:
                 raise SyntaxError()
             my_list = args.split(" ")
-            # print(my_list)
             obj = eval("{}()".format(my_list[0]))
-            # print(obj)
-            # print(my_list[1:])
             for x in my_list[1:]:
                 ag = x.split("=")
                 ag[1] = eval(ag[1])
@@ -218,12 +216,9 @@ class HBNBCommand(cmd.Cmd):
                 print("** class doesn't exist **")
                 return
             for k, v in storage.all(HBNBCommand.classes[args]).items():
-                # for k, v in storage._FileStorage__objects.items():
-                # if k.split('.')[0] == args:
                 print_list.append(str(v))
         else:
             for k, v in storage.all().items():
-                # for k, v in storage._FileStorage__objects.items():
                 print_list.append(str(v))
 
         print(print_list)
