@@ -37,12 +37,10 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
-
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
         _cmd = _cls = _id = _args = ''  # initialize line elements
-
         # scan for general formating - i.e '.', '(', ')'
         if not ('.' in line and '(' in line and ')' in line):
             return line
@@ -94,7 +92,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, command):
         """ Method to exit the HBNB console"""
-        exit()
+        return True
 
     def help_quit(self):
         """ Prints the help documentation for quit  """
@@ -114,29 +112,31 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
-        arg_s = args.split()
-        if not arg_s:
+        """Creates a new instance of BaseModel, saves it
+        Exceptions:
+            SyntaxError: when there is no args given
+            NameError: when there is no object taht has the name
+        """
+        try:
+            if not args:
+                raise SyntaxError()
+            my_list = args.split(" ")
+            # print(my_list)
+            obj = eval("{}()".format(my_list[0]))
+            # print(obj)
+            # print(my_list[1:])
+            for x in my_list[1:]:
+                ag = x.split("=")
+                ag[1] = eval(ag[1])
+                if type(ag[1]) is str:
+                    ag[1] = ag[1].replace("_", " ")
+                setattr(obj, ag[0], ag[1])
+            obj.save()
+            print("{}".format(obj.id))
+        except SyntaxError:
             print("** class name missing **")
-            return
-
-        if arg_s[0] not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-
-        kwarg = {}
-        for find in arg_s[1:]:
-            search = find.split("=")[1].replace("\"", '').replace("_", " ")
-            if find.split("=")[0] in HBNBCommand.types.keys():
-                kwarg[find.split("=")[0]] = HBNBCommand.types[find.split("=")
-                                                              [0]](search)
-            else:
-                kwarg[find.split("=")[0]] = search
-
-        new_instance = HBNBCommand.classes[arg_s[0]]()
-        new_instance.__dict__.update(**kwarg)
-        storage.save()
-        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -212,17 +212,18 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
         print_list = []
-
         if args:
             args = args.split(' ')[0]  # remove possible trailing args
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            for k, v in storage.all(HBNBCommand.classes[args]).items():
+                # for k, v in storage._FileStorage__objects.items():
+                # if k.split('.')[0] == args:
+                print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
+                # for k, v in storage._FileStorage__objects.items():
                 print_list.append(str(v))
 
         print(print_list)
