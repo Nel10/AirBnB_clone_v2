@@ -30,7 +30,7 @@ def do_deploy(archive_path):
     """
     distributes an archive to your web servers
     """
-    if exist(archive_path) is False:
+    if exists(archive_path) is False:
         return False
     try:
         file_name = archive_path.split("/")[-1]
