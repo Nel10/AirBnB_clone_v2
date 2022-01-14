@@ -3,32 +3,37 @@
 Fabric script that generates a .tgz archive from the
 contents of the web_static folder of your AirBnB Clone
 """
-from fabric.api import *
-from datetime import datetime
 from os.path import exists
-
-env.hosts = ["35.231.214.154", "18.232.149.70"]
-env.user = "ubuntu"
+from fabric.api import *
+env.hosts = ['34.138.152.200', '3.85.201.247']
+env.user = 'ubuntu'
 
 
 def do_deploy(archive_path):
-    """
-    distributes an archive to your web servers
+    """Fabric script that distributes an archive to your web servers,
+    using the function do_deploy
     """
     if exists(archive_path) is False:
         return False
+    start = archive_path.find("web_static")
+    end = archive_path.find(".tgz")
+    # Getting filename withouth extension
+    filename_woe = archive_path[start:end]
+    # Getting filename with extension
+    filename_we = archive_path[start:]
     try:
-        file_name = archive_path.split("/")[-1]
-        ext_not = file_name.split(".")[0]
-        rout_path = "/data/web_static/releases/"
-        put(archive_path, '/tmp/')
-        run('mkdir -p {}{}/'.format(rout_path, ext_not))
-        run('tar -xzf /tmp/{} -C {}{}/'.format(file_name, rout_path, ext_not))
-        run('rm /tmp/{}'.format(file_name))
-        run('mv {0}{1}/web_static/* {0}{1}/'.format(rout_path, ext_not))
-        run('rm -rf {}{}/web_static'.format(rout_path, ext_not))
-        run('rm -rf /data/web_static/current')
-        run('ln -s {}{}/ /data/web_static/current'.format(rout_path, ext_not))
+        put(archive_path, "/tmp/")
+        run("sudo mkdir -p /data/web_static/releases/{}/".format(filename_woe))
+        run("sudo tar -xzf /tmp/{} -C /data/web_static/releases/{}/"
+            .format(filename_we, filename_woe))
+        run("sudo rm -rf /tmp/{}".format(filename_we))
+        run("sudo mv /data/web_static/releases/{}/web_static/* /data/\
+web_static/releases/{}/".format(filename_woe, filename_woe))
+        run("sudo rm -rf /data/web_static/releases/{}/web_static"
+            .format(filename_woe))
+        run("sudo rm -rf /data/web_static/current")
+        run("sudo ln -s /data/web_static/releases/{}/ /data/web_static/current"
+            .format(filename_woe))
         return True
     except Exception:
         return False
