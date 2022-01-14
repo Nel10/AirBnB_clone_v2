@@ -5,7 +5,7 @@ contents of the web_static folder of your AirBnB Clone
 """
 from os.path import exists
 from fabric.api import *
-env.hosts = ['34.138.152.200', '3.85.201.247']
+env.host = ['35.231.214.154', '18.232.149.70']
 env.user = 'ubuntu'
 
 
