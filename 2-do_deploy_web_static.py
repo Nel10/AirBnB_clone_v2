@@ -15,9 +15,9 @@ def do_deploy(archive_path):
     """
     distributes an archive to your web servers
     """
+    if exists(archive_path) is False:
+        return False
     try:
-        if exists(archive_path) is False:
-            return False
         file_name = archive_path.split("/")[-1]
         ext_not = file_name.split(".")[0]
         rout_path = "/data/web_static/releases/"
@@ -29,6 +29,6 @@ def do_deploy(archive_path):
         run('rm -rf {}{}/web_static'.format(rout_path, ext_not))
         run('rm -rf /data/web_static/current')
         run('ln -s {}{}/ /data/web_static/current'.format(rout_path, ext_not))
+        return True
     except Exception:
         return False
-    return True
