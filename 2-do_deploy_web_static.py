@@ -3,31 +3,28 @@
 Fabric script that generates a .tgz archive from the
 contents of the web_static folder of your AirBnB Clone
 """
+from os import *
 from fabric.api import *
-from datetime import datetime
-from os import path
+env.user = 'ubuntu'
+env.hosts = ['35.237.1.254', '54.197.195.161']
 
-env.hosts = ["35.231.214.154", "18.232.149.70"]
-env.user = "ubuntu"
 
 def do_deploy(archive_path):
-    """
-    distributes an archive to your web servers
-    """
+    """distributes an archive to your web servers"""
+    if archive_path is None:
+        return False
     try:
-        if not (path.exists(archive_path)):
-            return False
-        file_name = archive_path.split("/")[-1]
-        ext_not = file_name.split(".")[0]
-        rout_path = "/data/web_static/releases/"
+        nfile = archive_path.split("/")[-1]
+        npath = nfile.split(".")[0]
+        path = "/data/web_static/releases/"
         put(archive_path, '/tmp/')
-        run('mkdir -p {}{}/'.format(rout_path, ext_not))
-        run('tar -xzf /tmp/{} -C {}{}/'.format(file_name, rout_path, ext_not))
-        run('rm /tmp/{}'.format(file_name))
-        run('mv {0}{1}/web_static/* {0}{1}/'.format(rout_path, ext_not))
-        run('rm -rf {}{}/web_static'.format(rout_path, ext_not))
-        run('rm -rf /data/web_static/current')
-        run('ln -s {}{}/ /data/web_static/current'.format(rout_path, ext_not))
+        run('mkdir -p {}{}/'.format(path, npath))
+        run('sudo tar -xzf /tmp/{} -C {}{}/'.format(nfile, path, npath))
+        run('sudo rm /tmp/{}'.format(nfile))
+        run('sudo mv {0}{1}/web_static/* {0}{1}/'.format(path, npath))
+        run('sudo rm -rf {}{}/web_static'.format(path, npath))
+        run('sudo rm -rf /data/web_static/current')
+        run('sudo ln -s {}{}/ /data/web_static/current'.format(path, npath))
     except Exception:
         return False
     return True
