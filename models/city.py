@@ -14,7 +14,7 @@ if getenv("HBNB_TYPE_STORAGE") == "db":
         state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
         places = relationship("Place")
 else:
-    class City:
+    class City(BaseModel):
         '''Class City for FileStorage'''
         name = ""
         state_id = ""
