@@ -19,4 +19,13 @@ else:
     class State(BaseModel):
         """ Defined class to work with FileStorage'"""
         name = ''
-        cities = models.storage.all(City)
+
+        @property
+        def cities(self):
+            """return values"""
+            cities = models.storage.all(City).values()
+            lis_values = []
+            for i in cities:
+                if i.state_id == self.id:
+                    lis_values.append(i)
+            return lis_values
